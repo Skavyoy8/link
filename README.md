@@ -4,7 +4,7 @@ Bio-link une page : une constellation de particules 3D qui se métamorphose au f
 (sphère → cube → tore → galaxie → hélice), avec rail de progression, titres « décryptés »
 et quelques secrets cachés.
 
-**➜ Voir le site : https://skavyoy8.github.io/lueur/**
+**➜ Voir le site : https://skavyoy8.github.io/link/**
 
 ## Tech
 
