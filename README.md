@@ -1,4 +1,4 @@
-# Lueur · Skavyoy — Tous mes liens
+# Link · Skavyoy — Tous mes liens
 
 Bio-link une page : une constellation de particules 3D qui se métamorphose au fil du scroll
 (sphère → cube → tore → galaxie → hélice), avec rail de progression, titres « décryptés »
