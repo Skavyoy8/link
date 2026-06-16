@@ -1,21 +1,29 @@
-# Link · Skavyoy — Tous mes liens
+# Skavyoy — link
 
-Bio-link une page : une constellation de particules 3D qui se métamorphose au fil du scroll
-(sphère → cube → tore → galaxie → hélice), avec rail de progression, titres « décryptés »
-et quelques secrets cachés.
+Bio-link minimaliste : un pseudonyme au centre, les liens en orbite autour,
+le tout flottant sur un shader animé. Une seule couleur d'accent sombre (bleu),
+aucun texte superflu.
 
-**➜ Voir le site : https://skavyoy8.github.io/link/**
+**➜ https://skavyoy8.github.io/link/**
+
+## Concept
+
+Fusion de deux idées :
+- **Radial orbital timeline** — les liens (nœuds) tournent autour du noyau central avec
+  profondeur (échelle / opacité / z-index), pause au survol, clic = ouverture du lien.
+- **Shader lines** — fond WebGL ([Three.js](https://threejs.org/)) de lignes radiantes,
+  passé en monochrome teinté sur l'accent et atténué pour rester sombre.
+
+Le pseudo central est aussi le bouton « partager » (clic = copie du lien).
 
 ## Tech
 
-- Un seul fichier (`index.html`), zéro build, zéro dépendance installée
-- [Three.js](https://threejs.org/) chargé via CDN pour la constellation
-- Design system : noir pur, un seul violet d'action, typographie Inter ultra-fine
-- Accessible : `prefers-reduced-motion` respecté, navigation clavier, contrastes AA
+- Un seul fichier (`index.html`), zéro build, Three.js via CDN.
+- Accent = une seule variable CSS `--accent` (change-la pour changer toute l'ambiance).
+- Accessible : liens réels (fonctionnent sans JS), `prefers-reduced-motion` respecté,
+  navigation clavier, titre lisible par lecteur d'écran.
 
 ## Lancer en local
-
-N'importe quel serveur statique, par exemple :
 
 ```bash
 npx serve .

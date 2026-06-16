@@ -3,459 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Skavyoy · Tous mes liens</title>
-<meta name="description" content="Skavyoy — apprend la cyber-sécurité, fan d'IA. GitHub, TryHackMe, Instagram, TikTok : tout au même endroit.">
+<title>Skavyoy</title>
+<meta name="description" content="Skavyoy">
 <meta name="theme-color" content="#000000">
-<meta property="og:title" content="Skavyoy · Tous mes liens">
-<meta property="og:description" content="Cyber-sécurité, IA, code & vidéos — un seul endroit.">
+<meta property="og:title" content="Skavyoy">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%238052ff'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='32' fill='white'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%233b82f6'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='32' fill='%23ffffff'%3ES%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;500&display=swap" rel="stylesheet">
 
 <style>
 /* ============================================================
-   SKAVYOY — bio-link cosmique
-   Système de design : "Dala" (DESIGN.md)
-   Void noir · Plum Voltage unique couleur d'action · zéro ombre,
-   zéro dégradé · pilules 24px · display weight 200 tracking -0.04em
+   SKAVYOY · orbital minimal
+   Fusion : "radial orbital timeline" + "shader lines" (Three.js)
+   Un seul accent sombre, pseudonyme au centre, liens en orbite.
    ============================================================ */
 :root{
-  /* Couleurs */
-  --color-void: #000000;
-  --color-bone: #ffffff;
-  --color-ash: #bdbdbd;
-  --color-smoke: #9a9a9a;
-  --color-plum-voltage: #8052ff;
-  --color-amber-spark: #ffb829;
-  --color-lichen: #15846e;
-  --hairline: rgba(255,255,255,.10);
-  --hairline-strong: rgba(255,255,255,.25);
-
-  /* Typo */
-  --font-acronym: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-
-  /* Espacements (base 6px) */
-  --spacing-12: 12px; --spacing-18: 18px; --spacing-24: 24px;
-  --spacing-30: 30px; --spacing-36: 36px; --spacing-60: 60px;
-  --spacing-96: 96px; --spacing-120: 120px;
-
-  /* Layout */
-  --page-max-width: 1200px;
-  --radius: 24px;
+  --bg: #000000;
+  --text: #ffffff;
+  --accent: #3b82f6;            /* bleu électrique — change cette seule valeur (+ --on-accent) */
+  --accent-soft: rgba(59,130,246,.20);
+  --accent-line: rgba(59,130,246,.42);
+  --on-accent: #ffffff;         /* texte/icône posé SUR l'accent */
+  --node: 64px;
+  --node-mobile: 58px;
+  --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 *{ box-sizing: border-box; margin: 0; padding: 0; }
-html{ scroll-behavior: smooth; }
+html, body{ height: 100%; }
 body{
-  font-family: var(--font-acronym);
-  background: var(--color-void);
-  color: var(--color-bone);
-  font-size: 15px;
-  line-height: 1.5;
-  letter-spacing: .025em;
-  min-height: 100dvh;
-  overflow-x: hidden;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
-::selection{ background: var(--color-plum-voltage); color: var(--color-bone); }
-a{ color: inherit; }
-button{ font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
-:focus-visible{ outline: 2px solid var(--color-plum-voltage); outline-offset: 4px; border-radius: 4px; }
+::selection{ background: var(--accent); color: var(--on-accent); }
+:focus-visible{ outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
 
-/* ============================================================
-   Cosmos (canvas Three.js)
-   ============================================================ */
-#cosmos{ position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.sr-only{
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
 
-/* ============================================================
-   Navigation
-   ============================================================ */
-@keyframes fadein{ from{ opacity: 0; } }
-.nav{
-  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: var(--spacing-18) var(--spacing-30);
-  padding-top: max(var(--spacing-18), env(safe-area-inset-top));
-  transition: background .3s ease, border-color .3s ease;
-  border-bottom: 1px solid transparent;
-  animation: fadein 1s .2s backwards;
-}
-.nav.scrolled{ background: var(--color-void); border-bottom-color: var(--hairline); }
-.brand{
-  display: inline-flex; align-items: center; gap: var(--spacing-12);
-  font-size: 18px; font-weight: 600; letter-spacing: .021em;
-  text-decoration: none; text-transform: uppercase;
-}
-.brand svg{ width: 22px; height: 22px; stroke: var(--color-plum-voltage); fill: none; stroke-width: 1.5; stroke-linejoin: round; }
+/* ---------- Fond : shader Three.js ---------- */
+#shader{ position: fixed; inset: 0; z-index: 0; display: block; }
 
-.pill{
-  display: inline-flex; align-items: center; gap: 10px;
-  border-radius: var(--radius);
-  font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
-  padding: 14px 18px; min-height: 44px;
-  text-decoration: none;
-  transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
-  transition: background .2s ease, border-color .2s ease, color .2s ease, transform .35s cubic-bezier(.22,.9,.3,1);
-  touch-action: manipulation;
+/* vignette pour assombrir les bords et concentrer le regard */
+.vignette{
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0,0,0,.72) 0%, rgba(0,0,0,.35) 26%, transparent 46%, rgba(0,0,0,.6) 78%, #000 100%);
 }
-.pill-primary{ background: var(--color-plum-voltage); color: var(--color-bone); }
-.pill-primary:hover{ background: #6f42ea; }
-.pill-ghost{ border: 1px solid var(--hairline-strong); color: var(--color-bone); }
-.pill-ghost:hover{ border-color: var(--color-bone); }
-.pill-amber{ border: 1px solid var(--color-amber-spark); color: var(--color-bone); }
-.pill-amber:hover{ background: rgba(255,184,41,.08); }
-.pill svg{ width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; transition: transform .25s ease; }
-.pill[target="_blank"]:hover svg{ transform: translate(2px,-2px); }
-.pill:active{ opacity: .8; }
 
-/* ============================================================
-   Rail de progression (la ligne qui défile)
-   ============================================================ */
-.rail{
-  position: fixed; left: 30px; top: 50%; transform: translateY(-50%);
-  height: 56vh; z-index: 40;
-  animation: fadein 1s .5s backwards;
+/* ---------- Scène orbitale ---------- */
+.stage{
+  position: fixed; inset: 0; z-index: 2;
+  display: grid; place-items: center;
 }
-.rail-line{ position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-50%); background: var(--hairline); }
-.rail-fill{
-  position: absolute; left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-50%) scaleY(0);
-  transform-origin: top; background: var(--color-plum-voltage);
+.orbit{
+  position: relative;
+  width: 1px; height: 1px;            /* point d'ancrage central */
 }
-.rail-dot{
-  position: absolute; left: 50%; transform: translate(-50%,-50%);
-  width: 24px; height: 24px; display: grid; place-items: center;
-}
-.rail-dot::after{
-  content: ""; width: 7px; height: 7px; border-radius: 50%;
-  background: var(--color-void); border: 1px solid var(--color-smoke);
-  transition: background .25s ease, border-color .25s ease, transform .25s ease;
-}
-.rail-dot.active::after{ background: var(--color-plum-voltage); border-color: var(--color-plum-voltage); transform: scale(1.45); }
-.rail-dot::before{
-  content: attr(data-label);
-  position: absolute; left: 22px; top: 50%; transform: translateY(-50%);
-  font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--color-smoke); white-space: nowrap;
-  opacity: 0; transition: opacity .25s ease, color .25s ease;
+
+/* anneau guide */
+.ring{
+  position: absolute; top: 50%; left: 50%;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 50%;
+  transform: translate(-50%,-50%);
   pointer-events: none;
 }
-.rail-dot:hover::before, .rail-dot:focus-visible::before{ opacity: 1; }
-.rail-dot.active::before{ opacity: 1; color: var(--color-bone); }
 
-/* barre de progression mobile */
-.progress-top{
-  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 60;
-  background: var(--color-plum-voltage);
-  transform: scaleX(0); transform-origin: left;
-  display: none;
+/* ---------- Noyau central : le pseudo ---------- */
+.core{
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  display: grid; place-items: center;
+  background: none; border: 0; cursor: pointer;
+  padding: 18px 22px;
+  z-index: 5;
 }
-
-/* ============================================================
-   Scènes
-   ============================================================ */
-.scene{
-  position: relative; z-index: 1;
-  min-height: 100svh;
-  display: flex; align-items: center;
-}
-.scene-inner{
-  position: relative;
-  width: 100%; max-width: var(--page-max-width);
-  margin: 0 auto; padding: var(--spacing-96) var(--spacing-30);
-  display: flex;
-}
-.scene--right .scene-inner{ justify-content: flex-end; }
-.block{ max-width: 480px; }
-
-/* numéro fantôme en parallaxe derrière la section */
-.scene-num{
-  position: absolute; top: 50%; right: var(--spacing-30);
-  transform: translateY(-50%);
-  font-weight: 200; font-size: clamp(160px, 26vw, 300px);
-  line-height: 1; letter-spacing: -.04em;
-  color: var(--color-bone); opacity: .045;
-  pointer-events: none; user-select: none;
-}
-.scene--right .scene-num{ left: var(--spacing-30); right: auto; }
-
-.eyebrow{
-  font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--color-plum-voltage);
-  margin-bottom: var(--spacing-18);
-}
-.eyebrow[data-tone="bone"]{ color: var(--color-bone); }
-.eyebrow[data-tone="amber"]{ color: var(--color-amber-spark); }
-.eyebrow[data-tone="lichen"]{ color: var(--color-lichen); }
-
-.hero-title{
+.core-name{
+  position: relative; z-index: 2;
   font-weight: 200;
-  font-size: clamp(48px, 12vw, 104px);
-  line-height: .85; letter-spacing: -.04em;
-  text-transform: uppercase;
+  font-size: clamp(28px, 7vw, 54px);
+  letter-spacing: .14em;
+  padding-left: .14em;               /* compense le tracking à droite */
+  color: var(--text);
+  text-shadow: 0 0 24px var(--accent-soft), 0 0 60px var(--accent-soft);
+  transition: text-shadow .4s ease, letter-spacing .4s ease;
   white-space: nowrap;
 }
-@keyframes lrise{ from{ opacity: 0; transform: translateY(.3em); } to{ opacity: 1; transform: none; } }
-.hero-title span{
-  display: inline-block;
-  animation: lrise .8s cubic-bezier(.22,.9,.3,1) backwards;
+.core:hover .core-name{
+  text-shadow: 0 0 28px var(--accent), 0 0 70px var(--accent-soft);
+  letter-spacing: .2em;
 }
-.scene-title{
-  font-weight: 200;
-  font-size: clamp(48px, 9vw, 78px);
-  line-height: .9; letter-spacing: -.04em;
+/* pings concentriques */
+.core .ping{
+  position: absolute; top: 50%; left: 50%;
+  width: 120px; height: 120px;
+  margin: -60px 0 0 -60px;
+  border: 1px solid var(--accent-line);
+  border-radius: 50%;
+  opacity: 0;
+  animation: ping 3.4s cubic-bezier(0,0,.2,1) infinite;
 }
-.lead{
-  font-size: 18px; line-height: 1.5; letter-spacing: .025em;
-  color: var(--color-ash);
-  max-width: 46ch;
-  margin: var(--spacing-24) 0 var(--spacing-36);
+.core .ping:nth-child(2){ animation-delay: 1.7s; }
+@keyframes ping{
+  0%   { transform: scale(.55); opacity: .55; }
+  70%  { opacity: 0; }
+  100% { transform: scale(2.4); opacity: 0; }
 }
-.glyph{ width: 52px; height: 52px; margin-bottom: var(--spacing-24); }
-.glyph svg{ width: 100%; height: 100%; }
-.glyph .fill{ fill: var(--color-bone); }
-.glyph .line{ fill: none; stroke: var(--color-bone); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
-.scroll-cue{
-  display: inline-flex; align-items: center; gap: var(--spacing-12);
-  margin-top: var(--spacing-60);
-  font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--color-smoke);
-}
-.scroll-cue i{ display: block; width: 1px; height: 42px; background: var(--color-smoke); animation: cue 2s ease-in-out infinite; }
-@keyframes cue{ 0%,100%{ transform: scaleY(.4); transform-origin: top; } 50%{ transform: scaleY(1); transform-origin: top; } }
-
-/* éléments animés par le scroll (activé par JS via .scrub sur <html>) */
-.scrub .block > *{ opacity: 0; transform: translate3d(var(--mx, 0px), calc(var(--sy, 0px) + var(--my, 0px)), 0); }
-
-/* ============================================================
-   Pied de page
-   ============================================================ */
-.footer{
-  position: relative; z-index: 1;
-  display: flex; align-items: center; justify-content: center;
-  min-height: 90svh;
-  text-align: center;
-  padding: var(--spacing-120) var(--spacing-30) var(--spacing-96);
-}
-.footer .block{ max-width: none; }
-.footer h2{
-  font-weight: 200; font-size: clamp(28px, 5vw, 48px);
-  line-height: 1.1; letter-spacing: -.04em;
-  margin-bottom: var(--spacing-36);
-}
-.sicons{ display: flex; justify-content: center; gap: var(--spacing-12); flex-wrap: wrap; margin-bottom: var(--spacing-60); }
-.sicons a{
-  width: 48px; height: 48px; border-radius: 50%;
+/* ---------- Nœuds en orbite ---------- */
+.node{
+  position: absolute; top: 50%; left: 50%;
+  width: var(--node); height: var(--node);
+  margin: calc(var(--node) / -2) 0 0 calc(var(--node) / -2);
   display: grid; place-items: center;
-  border: 1px solid var(--hairline-strong);
-  transition: border-color .2s ease, color .2s ease;
-  color: var(--color-bone);
+  border-radius: 50%;
+  color: var(--text);
+  text-decoration: none;
+  background: rgba(0,0,0,.55);
+  border: 1px solid rgba(255,255,255,.22);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  will-change: transform;
+  transition: background .3s ease, border-color .3s ease, box-shadow .3s ease, color .3s ease;
   touch-action: manipulation;
 }
-.sicons a:hover{ border-color: var(--color-plum-voltage); color: var(--color-plum-voltage); }
-.sicons svg{ width: 19px; height: 19px; }
-.sicons .fill{ fill: currentColor; }
-.sicons .line{ fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.footer-note{ font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--color-smoke); }
+.node svg{ width: 25px; height: 25px; display: block; }
+.node .fill{ fill: currentColor; }
+.node .line{ fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.node:hover, .node:focus-visible{
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 0 24px var(--accent-soft), 0 0 48px var(--accent-soft);
+}
+/* libellé (un seul mot, visible au survol uniquement) */
+.node-label{
+  position: absolute; top: calc(100% + 10px); left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--accent); white-space: nowrap;
+  opacity: 0; transition: opacity .25s ease;
+  pointer-events: none;
+}
+.node:hover .node-label, .node:focus-visible .node-label{ opacity: 1; }
 
-/* ============================================================
-   Toast
-   ============================================================ */
+/* ---------- Toast ---------- */
 .toast{
-  position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom)); z-index: 100;
-  transform: translate(-50%, 80px); opacity: 0;
-  display: flex; align-items: center; gap: 10px;
-  padding: 14px 22px; border-radius: var(--radius);
-  background: var(--color-void); border: 1px solid var(--hairline-strong);
-  font-size: 14px; letter-spacing: .025em;
-  transition: transform .35s ease, opacity .3s ease;
+  position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom)); z-index: 30;
+  transform: translate(-50%, 70px); opacity: 0;
+  display: flex; align-items: center; gap: 9px;
+  padding: 12px 20px; border-radius: 999px;
+  background: rgba(0,0,0,.7); border: 1px solid var(--accent-line);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  font-size: 13px; letter-spacing: .03em;
+  transition: transform .4s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
   pointer-events: none;
 }
 .toast.show{ transform: translate(-50%, 0); opacity: 1; }
-.toast svg{ width: 16px; height: 16px; stroke: var(--color-plum-voltage); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.toast svg{ width: 15px; height: 15px; stroke: var(--accent); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
-/* ============================================================
-   Responsive
-   ============================================================ */
-@media (min-width: 880px){
-  /* réserve l'espace du rail de progression à gauche */
-  .scene-inner{ padding-left: 96px; padding-right: 96px; }
-  .scene-num{ right: 96px; }
-  .scene--right .scene-num{ left: 96px; }
-}
-@media (max-width: 879px){
-  .rail{ display: none; }
-  .progress-top{ display: block; }
-  #cosmos{ opacity: .5; }
-  .scene-inner, .scene--right .scene-inner{ justify-content: center; }
-  .block{ text-align: center; }
-  .lead{ margin-left: auto; margin-right: auto; }
-  .glyph{ margin-left: auto; margin-right: auto; }
-  .scene-num{ display: none; }
-}
-@media (max-width: 480px){
-  .nav{ padding-left: var(--spacing-18); padding-right: var(--spacing-18); }
-  .scene-inner{ padding-left: var(--spacing-24); padding-right: var(--spacing-24); }
-}
-
-/* ============================================================
-   Mouvement réduit
-   ============================================================ */
+/* ---------- Mouvement réduit ---------- */
 @media (prefers-reduced-motion: reduce){
-  html{ scroll-behavior: auto; }
-  *, *::before, *::after{ animation: none !important; transition: none !important; }
-  .scrub .block > *{ opacity: 1; }
+  .core .ping{ animation: none; display: none; }
+  *{ transition-duration: .01ms !important; }
 }
 </style>
 </head>
 <body>
 
-<canvas id="cosmos" aria-hidden="true"></canvas>
-<div class="progress-top" id="progressTop" aria-hidden="true"></div>
+<h1 class="sr-only">Skavyoy</h1>
 
-<!-- Navigation -->
-<header class="nav" id="nav">
-  <a class="brand" href="#accueil" aria-label="Skavyoy — retour en haut">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l7.5 5v9l-7.5 5-7.5-5v-9zM12 2.5v19M4.5 7.5l15 9M19.5 7.5l-15 9"/></svg>
-    Skavyoy
-  </a>
-  <button class="pill pill-primary" id="shareBtn">Partager</button>
-</header>
+<canvas id="shader" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
 
-<!-- Rail de progression (desktop) -->
-<nav class="rail" id="rail" aria-label="Progression">
-  <span class="rail-line" aria-hidden="true"></span>
-  <span class="rail-fill" id="railFill" aria-hidden="true"></span>
-  <a class="rail-dot" style="top:0%"   href="#accueil"   data-label="Accueil"   aria-label="Accueil"></a>
-  <a class="rail-dot" style="top:25%"  href="#github"    data-label="GitHub"    aria-label="GitHub"></a>
-  <a class="rail-dot" style="top:50%"  href="#tryhackme" data-label="TryHackMe" aria-label="TryHackMe"></a>
-  <a class="rail-dot" style="top:75%"  href="#instagram" data-label="Instagram" aria-label="Instagram"></a>
-  <a class="rail-dot" style="top:100%" href="#tiktok"    data-label="TikTok"    aria-label="TikTok"></a>
-</nav>
+<div class="stage">
+  <nav class="orbit" id="orbit" aria-label="Mes liens">
+    <span class="ring" id="ring" aria-hidden="true"></span>
 
-<main>
+    <!-- Noyau : le pseudo (clic = copier le lien) -->
+    <button class="core" id="core" aria-label="Skavyoy — copier le lien de la page">
+      <span class="ping" aria-hidden="true"></span>
+      <span class="ping" aria-hidden="true"></span>
+      <span class="core-name">Skavyoy</span>
+    </button>
 
-  <!-- ════════════ ACCUEIL · sphère ════════════ -->
-  <section class="scene" id="accueil" data-x="1.1" data-tint="#8052ff" data-form="sphere" data-z="3.5">
-    <div class="scene-inner">
-      <div class="block">
-        <p class="eyebrow">Cyber-sécurité · IA</p>
-        <h1 class="hero-title">Skavyoy</h1>
-        <p class="lead">Apprend la cyber-sécurité, fan d'IA. Quatre portes d'entrée vers ce que je fais — descends pour les découvrir.</p>
-        <a class="pill pill-ghost" href="#github">
-          Explorer
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
-        </a>
-        <div class="scroll-cue" aria-hidden="true"><i></i>Défiler</div>
-      </div>
-    </div>
-  </section>
+    <!-- Nœuds en orbite : liens réels (fonctionnent même sans JS) -->
+    <a class="node" data-i="0" href="https://github.com/Skavyoy8" target="_blank" rel="noopener" aria-label="GitHub">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path class="fill" d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      <span class="node-label">GitHub</span>
+    </a>
+    <a class="node" data-i="1" href="https://tryhackme.com/p/skavyoy8" target="_blank" rel="noopener" aria-label="TryHackMe">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect class="line" x="2.5" y="4" width="19" height="16" rx="3"/><path class="line" d="M6.5 9.5l3 2.5-3 2.5M12.5 15h5"/></svg>
+      <span class="node-label">TryHackMe</span>
+    </a>
+    <a class="node" data-i="2" href="https://www.instagram.com/luke_albt" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect class="line" x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle class="line" cx="12" cy="12" r="4.3"/><circle class="fill" cx="17.6" cy="6.4" r="1.05"/></svg>
+      <span class="node-label">Instagram</span>
+    </a>
+    <a class="node" data-i="3" href="https://www.tiktok.com/@luke_abt" target="_blank" rel="noopener" aria-label="TikTok">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path class="fill" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+      <span class="node-label">TikTok</span>
+    </a>
+  </nav>
+</div>
 
-  <!-- ════════════ 01 · GITHUB · cube ════════════ -->
-  <section class="scene scene--right" id="github" data-x="-1.1" data-tint="#ffffff" data-form="cube" data-z="3.15">
-    <div class="scene-inner">
-      <span class="scene-num" aria-hidden="true">01</span>
-      <div class="block">
-        <div class="glyph" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path class="fill" d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        </div>
-        <p class="eyebrow" data-tone="bone">01 — Code</p>
-        <h2 class="scene-title">GitHub</h2>
-        <p class="lead">Mes projets.</p>
-        <a class="pill pill-ghost" href="https://github.com/Skavyoy8" target="_blank" rel="noopener">
-          Visiter GitHub
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════ 02 · TRYHACKME · tore ════════════ -->
-  <section class="scene" id="tryhackme" data-x="1.1" data-tint="#ffb829" data-form="torus" data-z="3.0">
-    <div class="scene-inner">
-      <span class="scene-num" aria-hidden="true">02</span>
-      <div class="block">
-        <div class="glyph" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><rect class="line" x="2.5" y="4" width="19" height="16" rx="3"/><path class="line" d="M6.5 9.5l3 2.5-3 2.5M12.5 15h5"/></svg>
-        </div>
-        <p class="eyebrow" data-tone="amber">02 — Hacking · À la une</p>
-        <h2 class="scene-title">TryHackMe</h2>
-        <p class="lead">Ma progression en cyber-sécurité.</p>
-        <a class="pill pill-amber" href="https://tryhackme.com/p/skavyoy8" target="_blank" rel="noopener">
-          Voir mon profil
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════ 03 · INSTAGRAM · galaxie ════════════ -->
-  <section class="scene scene--right" id="instagram" data-x="-1.1" data-tint="#8052ff" data-form="galaxy" data-z="3.2">
-    <div class="scene-inner">
-      <span class="scene-num" aria-hidden="true">03</span>
-      <div class="block">
-        <div class="glyph" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><rect class="line" x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle class="line" cx="12" cy="12" r="4.3"/><circle class="fill" cx="17.6" cy="6.4" r="1.05"/></svg>
-        </div>
-        <p class="eyebrow">03 — Photos</p>
-        <h2 class="scene-title">Instagram</h2>
-        <p class="lead">Mon Instagram.</p>
-        <a class="pill pill-ghost" href="https://www.instagram.com/luke_albt" target="_blank" rel="noopener">
-          Me suivre
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════ 04 · TIKTOK · hélice ════════════ -->
-  <section class="scene" id="tiktok" data-x="1.1" data-tint="#15846e" data-form="helix" data-z="3.2">
-    <div class="scene-inner">
-      <span class="scene-num" aria-hidden="true">04</span>
-      <div class="block">
-        <div class="glyph" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path class="fill" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
-        </div>
-        <p class="eyebrow" data-tone="lichen">04 — Vidéos</p>
-        <h2 class="scene-title">TikTok</h2>
-        <p class="lead">Abonne-toi, ça coûte rien.</p>
-        <a class="pill pill-ghost" href="https://www.tiktok.com/@luke_abt" target="_blank" rel="noopener">
-          Regarder
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════ PIED DE PAGE · sphère ════════════ -->
-  <footer class="footer" data-x="0" data-tint="#8052ff" data-form="sphere" data-z="4.3">
-    <div class="block">
-      <h2>Tous mes liens.<br>Un seul endroit.</h2>
-      <div class="sicons">
-        <a href="https://github.com/Skavyoy8" target="_blank" rel="noopener" aria-label="GitHub">
-          <svg viewBox="0 0 24 24"><path class="fill" d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        </a>
-        <a href="https://tryhackme.com/p/skavyoy8" target="_blank" rel="noopener" aria-label="TryHackMe">
-          <svg viewBox="0 0 24 24"><rect class="line" x="2.5" y="4" width="19" height="16" rx="3"/><path class="line" d="M6.5 9.5l3 2.5-3 2.5M12.5 15h5"/></svg>
-        </a>
-        <a href="https://www.instagram.com/luke_albt" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24"><rect class="line" x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle class="line" cx="12" cy="12" r="4.3"/><circle class="fill" cx="17.6" cy="6.4" r="1.05"/></svg>
-        </a>
-        <a href="https://www.tiktok.com/@luke_abt" target="_blank" rel="noopener" aria-label="TikTok">
-          <svg viewBox="0 0 24 24"><path class="fill" d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
-        </a>
-      </div>
-      <p class="footer-note">© 2026 Skavyoy</p>
-    </div>
-  </footer>
-</main>
-
-<!-- Toast -->
 <div class="toast" id="toast" role="status" aria-live="polite">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
-  <span>Lien copié !</span>
+  <span>Lien copié</span>
 </div>
 
 <script type="importmap">
@@ -465,493 +228,173 @@ button{ font: inherit; color: inherit; background: none; border: 0; cursor: poin
 <script type="module">
 import * as THREE from "three";
 
-const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const isMobile = matchMedia("(max-width: 879px)").matches;
-const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isMobile = matchMedia("(max-width: 760px)").matches;
 
-/* ============================================================
-   Partage + toast
-   ============================================================ */
-const toast = document.getElementById("toast");
-let toastTimer;
-document.getElementById("shareBtn").addEventListener("click", async () => {
-  const data = { title: document.title, url: location.href };
-  if (navigator.share) {
-    try { await navigator.share(data); return; } catch { /* annulé */ }
-  }
-  try {
-    await navigator.clipboard.writeText(location.href);
-    toast.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
-  } catch {}
-});
-
-/* ============================================================
-   Titre héros — cascade de lettres au chargement
-   ============================================================ */
-const heroTitle = document.querySelector(".hero-title");
-if (!reduceMotion) {
-  const txt = heroTitle.textContent.trim();
-  heroTitle.setAttribute("aria-label", txt);
-  heroTitle.textContent = "";
-  [...txt].forEach((ch, i) => {
-    const s = document.createElement("span");
-    s.textContent = ch;
-    s.setAttribute("aria-hidden", "true");
-    s.style.animationDelay = (.25 + i * .055) + "s";
-    heroTitle.appendChild(s);
-  });
-}
-
-/* ============================================================
-   Effet « décryptage » des titres de section
-   ============================================================ */
-const SCRAMBLE_CHARS = "!<>-_\\/[]{}=+*^?#01";
-const scrambleEl = el => {
-  if (reduceMotion || !el) return;
-  const orig = el.dataset.text || (el.dataset.text = el.textContent);
-  el.setAttribute("aria-label", orig);
-  const start = performance.now(), dur = 700;
-  cancelAnimationFrame(el._scr);
-  const tick = now => {
-    const p = Math.min(1, (now - start) / dur);
-    let out = "";
-    for (let i = 0; i < orig.length; i++) {
-      out += orig[i] === " " ? " " : (i / orig.length < p ? orig[i] : SCRAMBLE_CHARS[Math.random() * SCRAMBLE_CHARS.length | 0]);
-    }
-    el.textContent = out;
-    if (p < 1) el._scr = requestAnimationFrame(tick);
-  };
-  el._scr = requestAnimationFrame(tick);
+/* hex → vec3 (0–1) pour passer l'accent au shader */
+const hexToRgb = hex => {
+  const n = parseInt(hex.replace("#",""), 16);
+  return [((n>>16)&255)/255, ((n>>8)&255)/255, (n&255)/255];
 };
+const accent = hexToRgb(getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#22d3ee");
 
 /* ============================================================
-   Pilules magnétiques (desktop)
+   FOND — shader "lines" (repris de la ressource, Three.js)
+   Tinté en monochrome sur l'accent + atténué pour rester sombre.
    ============================================================ */
-if (finePointer && !reduceMotion) {
-  document.querySelectorAll(".pill").forEach(p => {
-    p.addEventListener("pointermove", e => {
-      const r = p.getBoundingClientRect();
-      p.style.setProperty("--mx", ((e.clientX - r.left - r.width / 2) * .22).toFixed(1) + "px");
-      p.style.setProperty("--my", ((e.clientY - r.top - r.height / 2) * .35).toFixed(1) + "px");
-    });
-    p.addEventListener("pointerleave", () => {
-      p.style.setProperty("--mx", "0px");
-      p.style.setProperty("--my", "0px");
-    });
-  });
-}
-
-/* onglet caché → clin d'œil dans le titre */
-document.addEventListener("visibilitychange", () => {
-  document.title = document.hidden ? "// reviens — Skavyoy" : "Skavyoy · Tous mes liens";
-});
-
-/* ============================================================
-   Scroll : nav, rail, scène courante
-   ============================================================ */
-const nav = document.getElementById("nav");
-const railFill = document.getElementById("railFill");
-const progressTop = document.getElementById("progressTop");
-const dots = [...document.querySelectorAll(".rail-dot")];
-const scenes = [...document.querySelectorAll("[data-x]")];
-
-let sceneIndex = 0;
-let pageProgress = 0;
-
-const onScroll = () => {
-  const max = document.documentElement.scrollHeight - innerHeight;
-  pageProgress = max > 0 ? Math.min(1, scrollY / max) : 0;
-  railFill.style.transform = `translateX(-50%) scaleY(${pageProgress})`;
-  progressTop.style.transform = `scaleX(${pageProgress})`;
-  nav.classList.toggle("scrolled", scrollY > 30);
-
-  // scène courante = celle dont le centre est le plus proche du centre de l'écran
-  const mid = innerHeight / 2;
-  let best = 0, bestDist = Infinity;
-  scenes.forEach((s, i) => {
-    const r = s.getBoundingClientRect();
-    const d = Math.abs(r.top + r.height / 2 - mid);
-    if (d < bestDist) { bestDist = d; best = i; }
-  });
-  if (best !== sceneIndex) {
-    sceneIndex = best;
-    scrambleEl(scenes[sceneIndex].querySelector(".scene-title"));
-  }
-  dots.forEach((d, i) => d.classList.toggle("active", i === Math.min(sceneIndex, dots.length - 1)));
-};
-addEventListener("scroll", onScroll, { passive: true });
-onScroll();
-
-/* ============================================================
-   Transitions au scroll — entrée/sortie continues des blocs
-   (cascade décalée par élément + parallaxe des numéros fantômes)
-   ============================================================ */
-const scrub = !reduceMotion;
-const blocks = scenes.map(s => {
-  const b = s.querySelector(".block");
-  return { scene: s, kids: b ? [...b.children] : [], num: s.querySelector(".scene-num") };
-});
-if (scrub) document.documentElement.classList.add("scrub");
-
-const smooth = p => p * p * (3 - 2 * p);
-const updateScrub = () => {
-  const vh = innerHeight;
-  for (const b of blocks) {
-    const r = b.scene.getBoundingClientRect();
-    if (r.bottom < -120 || r.top > vh + 120) continue;
-    const d = (r.top + r.height / 2 - vh / 2) / (vh * .62); // <0 : au-dessus, >0 : en-dessous
-    b.kids.forEach((k, j) => {
-      // cascade : les éléments suivants arrivent un peu plus tard
-      const dj = d > 0 ? d + j * .07 : d - j * .035;
-      const p = smooth(Math.max(0, Math.min(1, 1 - Math.abs(dj))));
-      k.style.opacity = p;
-      const off = (1 - p) * (dj > 0 ? 46 : -30);
-      k.style.setProperty("--sy", `${off.toFixed(2)}px`);
-    });
-    if (b.num) b.num.style.transform = `translateY(-50%) translateY(${(d * 80).toFixed(1)}px)`;
-  }
-};
-if (scrub) updateScrub();
-
-/* ============================================================
-   Cosmos — constellation Three.js qui se métamorphose
-   Formes par section : sphère → cube → tore → galaxie → hélice
-   Micro-formes (cercles, losanges, carrés) dans la palette :
-   Bone, Plum Voltage, Amber Spark, Lichen.
-   ============================================================ */
-const canvas = document.getElementById("cosmos");
-let renderer;
+const canvas = document.getElementById("shader");
+let shader = null;
 try {
-  renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: "low-power" });
-} catch { canvas.remove(); }
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: "low-power" });
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, isMobile ? 1.5 : 2));
 
-if (renderer) {
-  const DPR = Math.min(devicePixelRatio || 1, isMobile ? 1.5 : 2);
-  renderer.setPixelRatio(DPR);
+  const camera = new THREE.Camera();
+  camera.position.z = 1;
+  const scene = new THREE.Scene();
+  const geometry = new THREE.PlaneGeometry(2, 2);
 
-  const scene3 = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(55, 1, .1, 50);
-  camera.position.z = 3.5;
-
-  /* ---- textures de formes (cercle, losange) ---- */
-  const makeTex = draw => {
-    const c = document.createElement("canvas"); c.width = c.height = 64;
-    const x = c.getContext("2d"); x.fillStyle = "#fff"; draw(x, 64);
-    return new THREE.CanvasTexture(c);
+  const uniforms = {
+    time:       { value: 1.0 },
+    resolution: { value: new THREE.Vector2() },
+    accent:     { value: new THREE.Vector3(...accent) },
+    intensity:  { value: isMobile ? 0.20 : 0.26 }
   };
-  const circleTex  = makeTex((x, s) => { x.beginPath(); x.arc(s/2, s/2, s*.4, 0, Math.PI*2); x.fill(); });
-  const diamondTex = makeTex((x, s) => { x.translate(s/2, s/2); x.rotate(Math.PI/4); x.fillRect(-s*.3, -s*.3, s*.6, s*.6); });
 
-  /* ---- générateurs de formations ---- */
-  const jit = a => (Math.random() - .5) * a;
-  const FORMS = {
-    sphere(n, sc){
-      const p = new Float32Array(n * 3), golden = Math.PI * (3 - Math.sqrt(5));
-      for (let i = 0; i < n; i++) {
-        const y = 1 - (i / Math.max(1, n - 1)) * 2;
-        const r = Math.sqrt(Math.max(0, 1 - y * y));
-        const th = golden * i;
-        const rad = 1.12 * sc * (1 + jit(.07));
-        p[i*3] = Math.cos(th) * r * rad; p[i*3+1] = y * rad; p[i*3+2] = Math.sin(th) * r * rad;
-      }
-      return p;
-    },
-    cube(n, sc){
-      const p = new Float32Array(n * 3), h = .92 * sc;
-      for (let i = 0; i < n; i++) {
-        const f = Math.floor(Math.random() * 6);
-        const u = (Math.random() * 2 - 1) * h, v = (Math.random() * 2 - 1) * h;
-        const w = (f % 2 === 0 ? h : -h) + jit(.05);
-        const c = [u, v, w];
-        const axis = Math.floor(f / 2); // 0:z 1:x 2:y
-        if (axis === 0)      { p[i*3] = c[0]; p[i*3+1] = c[1]; p[i*3+2] = c[2]; }
-        else if (axis === 1) { p[i*3] = c[2]; p[i*3+1] = c[0]; p[i*3+2] = c[1]; }
-        else                 { p[i*3] = c[1]; p[i*3+1] = c[2]; p[i*3+2] = c[0]; }
-      }
-      return p;
-    },
-    torus(n, sc){
-      const p = new Float32Array(n * 3), R = .95 * sc, r = .34 * sc, tilt = .55;
-      for (let i = 0; i < n; i++) {
-        const th = Math.random() * Math.PI * 2, ph = Math.random() * Math.PI * 2;
-        const x = (R + r * Math.cos(ph)) * Math.cos(th) + jit(.04);
-        let y = r * Math.sin(ph) + jit(.04);
-        let z = (R + r * Math.cos(ph)) * Math.sin(th) + jit(.04);
-        const y2 = y * Math.cos(tilt) - z * Math.sin(tilt);
-        const z2 = y * Math.sin(tilt) + z * Math.cos(tilt);
-        p[i*3] = x; p[i*3+1] = y2; p[i*3+2] = z2;
-      }
-      return p;
-    },
-    galaxy(n, sc){
-      const p = new Float32Array(n * 3), tilt = .42;
-      for (let i = 0; i < n; i++) {
-        const rr = Math.sqrt(Math.random()) * 1.35 * sc;
-        const arm = i % 3;
-        const th = arm * (Math.PI * 2 / 3) + rr * 2.4 + jit(.5);
-        const x = Math.cos(th) * rr;
-        let y = jit(.1) * (1.5 - rr);
-        let z = Math.sin(th) * rr;
-        const y2 = y * Math.cos(tilt) - z * Math.sin(tilt);
-        const z2 = y * Math.sin(tilt) + z * Math.cos(tilt);
-        p[i*3] = x; p[i*3+1] = y2; p[i*3+2] = z2;
-      }
-      return p;
-    },
-    helix(n, sc){
-      const p = new Float32Array(n * 3);
-      for (let i = 0; i < n; i++) {
-        if (i % 6 === 5) { // poussière éparse autour
-          p[i*3] = jit(2.2) * sc; p[i*3+1] = jit(2.6) * sc; p[i*3+2] = jit(1.2) * sc;
-          continue;
+  const vertexShader = `
+    void main(){ gl_Position = vec4(position, 1.0); }
+  `;
+  // Fragment : structure d'origine, sortie passée en monochrome teinté.
+  const fragmentShader = `
+    #define TWO_PI 6.2831853072
+    precision highp float;
+    uniform vec2 resolution;
+    uniform float time;
+    uniform vec3 accent;
+    uniform float intensity;
+
+    float random(in float x){ return fract(sin(x)*1e4); }
+
+    void main(void){
+      vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+
+      vec2 fMosaicScal = vec2(4.0, 2.0);
+      vec2 vScreenSize = vec2(256.0, 256.0);
+      uv.x = floor(uv.x * vScreenSize.x / fMosaicScal.x) / (vScreenSize.x / fMosaicScal.x);
+      uv.y = floor(uv.y * vScreenSize.y / fMosaicScal.y) / (vScreenSize.y / fMosaicScal.y);
+
+      float t = time * 0.06 + random(uv.x) * 0.4;
+      float lineWidth = 0.0008;
+
+      float v = 0.0;
+      for(int j = 0; j < 3; j++){
+        for(int i = 0; i < 5; i++){
+          v += lineWidth * float(i*i) / abs(fract(t - 0.01*float(j) + float(i)*0.01) - length(uv));
         }
-        const t = i / n;
-        const y = (-1.3 + t * 2.6) * sc;
-        const ang = y * 3.4 + (i % 2 === 0 ? 0 : Math.PI);
-        const rad = .52 * sc;
-        p[i*3] = Math.cos(ang) * rad + jit(.07);
-        p[i*3+1] = y + jit(.05);
-        p[i*3+2] = Math.sin(ang) * rad + jit(.07);
       }
-      return p;
-    },
-    scatter(n, sc){
-      // chaos de naissance : les particules arrivent de partout à l'intro
-      const p = new Float32Array(n * 3);
-      for (let i = 0; i < n; i++) {
-        p[i*3] = jit(7) * sc; p[i*3+1] = jit(5) * sc; p[i*3+2] = jit(3) * sc;
-      }
-      return p;
+
+      vec3 color = accent * v * intensity;
+      gl_FragColor = vec4(color, 1.0);
     }
-  };
-  const formCache = new Map();
-  const getForm = (name, n, sc) => {
-    const key = `${name}_${n}_${sc}`;
-    if (!formCache.has(key)) formCache.set(key, FORMS[name](n, sc));
-    return formCache.get(key);
-  };
+  `;
 
-  /* ---- groupes de particules ---- */
-  const N = isMobile ? .45 : 1;
-  const globe = new THREE.Group();
+  const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader });
+  scene.add(new THREE.Mesh(geometry, material));
 
-  const makeGroup = (count, sc, opts) => {
-    const n = Math.round(count * N);
-    const g = new THREE.BufferGeometry();
-    const init = getForm("scatter", n, sc); // naît dispersé, s'assemble à l'intro
-    g.setAttribute("position", new THREE.BufferAttribute(init.slice(), 3));
-    const pts = new THREE.Points(g, new THREE.PointsMaterial({
-      size: opts.size, map: opts.map || null, color: opts.color,
-      transparent: true, opacity: opts.opacity, depthWrite: false,
-      alphaTest: opts.map ? .1 : 0
-    }));
-    globe.add(pts);
-    const rand = new Float32Array(n);
-    for (let i = 0; i < n; i++) rand[i] = .6 + Math.random() * .9;
-    return { pts, n, sc, from: new Float32Array(n * 3), to: init, rand };
-  };
-
-  const gBone   = makeGroup(2000, 1.00, { size: .020, map: circleTex,  color: 0xffffff, opacity: .8 });
-  const gPlum   = makeGroup(1300, 1.03, { size: .030, map: diamondTex, color: 0x8052ff, opacity: .95 });
-  const gAmber  = makeGroup(220,  1.07, { size: .026, map: circleTex,  color: 0xffb829, opacity: .9 });
-  const gLichen = makeGroup(220,  1.07, { size: .026, color: 0x15846e, opacity: .9 });
-  const morphGroups = [gBone, gPlum, gAmber, gLichen];
-
-  // halo ambiant — reste une sphère, contre-rotation pour la profondeur
-  const haloN = Math.round(500 * N);
-  const haloGeo = new THREE.BufferGeometry();
-  haloGeo.setAttribute("position", new THREE.BufferAttribute(getForm("sphere", haloN, 1.45).slice(), 3));
-  const halo = new THREE.Points(haloGeo, new THREE.PointsMaterial({
-    size: .016, map: circleTex, color: 0xffffff, transparent: true, opacity: .32, depthWrite: false, alphaTest: .1
-  }));
-  globe.add(halo);
-  scene3.add(globe);
-
-  // dérive éparse aux bords du void
-  const driftN = Math.round(260 * N);
-  const driftGeo = new THREE.BufferGeometry();
-  const dpos = new Float32Array(driftN * 3);
-  for (let i = 0; i < driftN; i++) {
-    dpos[i*3] = jit(12); dpos[i*3+1] = jit(8); dpos[i*3+2] = jit(4) - 1;
-  }
-  driftGeo.setAttribute("position", new THREE.BufferAttribute(dpos, 3));
-  const drift = new THREE.Points(driftGeo, new THREE.PointsMaterial({
-    size: .018, map: circleTex, color: 0x9a9a9a, transparent: true, opacity: .45, depthWrite: false, alphaTest: .1
-  }));
-  scene3.add(drift);
-
-  // comète occasionnelle qui traverse le void
-  const cometGeo = new THREE.BufferGeometry();
-  cometGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(6), 3));
-  const comet = new THREE.Line(cometGeo, new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 }));
-  scene3.add(comet);
-  let cometT = -4, cometY = 1, cometDirY = -.3;
-
-  /* ---- métamorphose ---- */
-  let morphT = 1, currentForm = "scatter";
-  const retarget = name => {
-    if (name === currentForm) return;
-    currentForm = name;
-    for (const g of morphGroups) {
-      g.from.set(g.pts.geometry.getAttribute("position").array);
-      g.to = getForm(name, g.n, g.sc);
-    }
-    morphT = 0;
-  };
-
-  /* ---- cibles pilotées par le scroll ---- */
-  const tintTarget = new THREE.Color(0x8052ff);
-  let xTarget = isMobile ? 0 : 1.1;
-  let zTarget = 3.5;
-
-  let baseScale = 1, xFactor = 1;
   const resize = () => {
-    renderer.setSize(innerWidth, innerHeight);
-    camera.aspect = innerWidth / innerHeight;
-    camera.updateProjectionMatrix();
-    baseScale = Math.max(.6, Math.min(1, innerWidth / 1100) * (isMobile ? .85 : 1));
-    // fenêtres étroites : formations poussées plus loin du texte
-    xFactor = isMobile ? .15 : (innerWidth < 1100 ? 1.35 : 1);
-    if (reduceMotion) renderer.render(scene3, camera);
+    renderer.setSize(innerWidth, innerHeight, false);
+    canvas.style.width = innerWidth + "px";
+    canvas.style.height = innerHeight + "px";
+    uniforms.resolution.value.set(canvas.width, canvas.height);
   };
-
-  let tmx = 0, tmy = 0, mxs = 0, mys = 0;
-  if (finePointer && !reduceMotion) {
-    addEventListener("pointermove", e => {
-      tmx = (e.clientX / innerWidth - .5);
-      tmy = (e.clientY / innerHeight - .5);
-    }, { passive: true });
-  }
-
-  // éclatement au clic / tap (hors liens et boutons)
-  addEventListener("click", e => {
-    if (reduceMotion || e.target.closest("a, button")) return;
-    burstT = 1; spin += .1;
-  });
-
-  // easter egg : tape « hack » au clavier
-  let hackT = 0, keyBuf = "";
-  addEventListener("keydown", e => {
-    if (e.key && e.key.length === 1) {
-      keyBuf = (keyBuf + e.key.toLowerCase()).slice(-4);
-      if (keyBuf === "hack") {
-        hackT = 4;
-        document.querySelectorAll(".scene-title").forEach(t => scrambleEl(t));
-      }
-    }
-  });
-
-  const clock = new THREE.Clock();
-  let spin = 0, intro = 0, lastY = scrollY, vs = 0, burstT = 0, lastBf = 0;
-
-  const frame = () => {
-    const dt = Math.min(clock.getDelta(), .05);
-    const elapsed = clock.elapsedTime;
-
-    // cible de la scène courante
-    const cur = scenes[Math.min(sceneIndex, scenes.length - 1)];
-    if (cur) {
-      xTarget = parseFloat(cur.dataset.x || "0") * xFactor;
-      zTarget = parseFloat(cur.dataset.z || "3.5");
-      tintTarget.set(cur.dataset.tint || "#8052ff");
-      retarget(cur.dataset.form || "sphere");
-    }
-
-    // mode hack : teinte lichen + rotation accélérée
-    if (hackT > 0) { hackT -= dt; tintTarget.set(0x15846e); spin += dt * .9; }
-
-    // éclatement au clic : pop rapide (0,18 s) puis retour élastique
-    const bf = burstT > 0 ? (burstT > .8 ? (1 - burstT) * 5 : burstT / .8) : 0;
-    if (burstT > 0) burstT = Math.max(0, burstT - dt / .9);
-
-    // métamorphose des formations (+ distorsion d'éclatement)
-    if (morphT < 1) {
-      morphT = Math.min(1, morphT + dt / 1.5);
-      const e = morphT < .5 ? 4 * morphT ** 3 : 1 - Math.pow(-2 * morphT + 2, 3) / 2;
-      for (const g of morphGroups) {
-        const attr = g.pts.geometry.getAttribute("position");
-        const a = attr.array, f = g.from, t = g.to, rnd = g.rand;
-        for (let i = 0, j = 0; i < a.length; i += 3, j++) {
-          const k = 1 + bf * .4 * rnd[j];
-          a[i]   = (f[i]   + (t[i]   - f[i])   * e) * k;
-          a[i+1] = (f[i+1] + (t[i+1] - f[i+1]) * e) * k;
-          a[i+2] = (f[i+2] + (t[i+2] - f[i+2]) * e) * k;
-        }
-        attr.needsUpdate = true;
-      }
-    } else if (bf > 0 || lastBf > 0) {
-      for (const g of morphGroups) {
-        const attr = g.pts.geometry.getAttribute("position");
-        const a = attr.array, t = g.to, rnd = g.rand;
-        for (let i = 0, j = 0; i < a.length; i += 3, j++) {
-          const k = 1 + bf * .4 * rnd[j];
-          a[i] = t[i] * k; a[i+1] = t[i+1] * k; a[i+2] = t[i+2] * k;
-        }
-        attr.needsUpdate = true;
-      }
-    }
-    lastBf = bf;
-
-    // position, teinte, caméra
-    globe.position.x += (xTarget - globe.position.x) * .045;
-    camera.position.z += (zTarget * (isMobile ? 1.12 : 1) - camera.position.z) * .03;
-    gPlum.pts.material.color.lerp(tintTarget, .03);
-
-    // rotation : continue + impulsion de scroll + souris
-    const v = scrollY - lastY; lastY = scrollY;
-    spin += dt * .12 + Math.max(-30, Math.min(30, v)) * .00035;
-    mxs += (tmx - mxs) * .05;
-    mys += (tmy - mys) * .05;
-    globe.rotation.y = spin + mxs * .35;
-    globe.rotation.x = mys * .25 + pageProgress * .45;
-    halo.rotation.y -= dt * .07;
-    drift.rotation.y += dt * .01;
-    drift.position.y = pageProgress * 1.2 - .6;
-
-    // scroll rapide → le champ d'étoiles s'étire (effet warp)
-    vs += (v - vs) * .1;
-    drift.scale.y = 1 + Math.min(.5, Math.abs(vs) * .004);
-
-    // comète
-    cometT += dt;
-    if (cometT > 0 && cometT < 1.1) {
-      const cx = -2.8 + cometT * 5.1;
-      const cy = cometY + cometT * cometDirY;
-      const cp = cometGeo.getAttribute("position");
-      cp.setXYZ(0, cx, cy, -.5);
-      cp.setXYZ(1, cx - .55, cy + .14, -.5);
-      cp.needsUpdate = true;
-      comet.material.opacity = Math.sin(Math.min(1, cometT / 1.1) * Math.PI) * .6;
-    } else if (cometT >= 1.1) {
-      cometT = -(6 + Math.random() * 9);
-      cometY = .4 + Math.random() * 1.2;
-      cometDirY = -.2 - Math.random() * .4;
-      comet.material.opacity = 0;
-    }
-
-    // intro + respiration
-    intro = Math.min(1, intro + dt / 1.6);
-    const ie = 1 - Math.pow(1 - intro, 3);
-    globe.scale.setScalar(baseScale * (.86 + .14 * ie) * (1 + Math.sin(elapsed * .6) * .012));
-
-    // transitions des blocs
-    updateScrub();
-
-    renderer.render(scene3, camera);
-    if (!reduceMotion) requestAnimationFrame(frame);
-  };
-
   resize();
   addEventListener("resize", resize, { passive: true });
-  requestAnimationFrame(frame);
-}
 
-/* sans WebGL : les transitions de blocs restent pilotées par le scroll */
-if (!renderer && scrub) {
-  addEventListener("scroll", () => requestAnimationFrame(updateScrub), { passive: true });
-}
+  shader = {
+    render(dt){ uniforms.time.value += dt * 1.0; renderer.render(scene, camera); }
+  };
+  if (reduce) shader.render(0.05); // image fixe
+} catch (e) { canvas.remove(); }
+
+/* ============================================================
+   ORBITE — mécanique reprise du "radial orbital timeline"
+   Auto-rotation, profondeur (z/opacité/échelle via cos/sin), focus.
+   ============================================================ */
+const nodes = [...document.querySelectorAll(".node")];
+const ring = document.getElementById("ring");
+const total = nodes.length;
+let R = 220;
+let angle = 0, auto = true;
+const ROT = 14; // degrés / seconde
+
+const setRadius = () => {
+  R = Math.max(120, Math.min(240, Math.min(innerWidth, innerHeight) * (isMobile ? 0.34 : 0.30)));
+  ring.style.width = ring.style.height = (R * 2) + "px";
+};
+setRadius();
+addEventListener("resize", setRadius, { passive: true });
+
+const place = () => {
+  for (let i = 0; i < total; i++) {
+    const a = ((i / total) * 360 + angle) % 360;
+    const rad = a * Math.PI / 180;
+    const x = Math.cos(rad) * R;
+    const y = Math.sin(rad) * R;
+    const depth = (1 + Math.sin(rad)) / 2;          // 0 (arrière) → 1 (avant)
+    const scale = 0.82 + depth * 0.26;
+    const n = nodes[i];
+    n.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${scale.toFixed(3)})`;
+    n.style.zIndex = String(Math.round(100 + 50 * Math.cos(rad)));
+    n.style.opacity = (0.45 + depth * 0.55).toFixed(3);
+  }
+};
+
+/* pause de la rotation au survol / focus d'un nœud */
+nodes.forEach(n => {
+  const stop = () => auto = false;
+  const go = () => auto = true;
+  n.addEventListener("pointerenter", stop);
+  n.addEventListener("pointerleave", go);
+  n.addEventListener("focus", stop);
+  n.addEventListener("blur", go);
+});
+
+/* repositionne les nœuds au redimensionnement (utile en reduced-motion : la boucle ne tourne pas) */
+addEventListener("resize", () => requestAnimationFrame(place), { passive: true });
+
+/* boucle */
+let last = performance.now();
+const loop = now => {
+  const dt = Math.min((now - last) / 1000, 0.05); last = now;
+  if (auto && !reduce) angle = (angle + dt * ROT) % 360;
+  place();
+  if (shader && !reduce) shader.render(dt);
+  requestAnimationFrame(loop);
+};
+if (reduce) { place(); } else { requestAnimationFrame(loop); }
+
+/* ============================================================
+   Noyau — clic = copier le lien (le pseudo EST le bouton)
+   ============================================================ */
+const toast = document.getElementById("toast");
+let tt;
+const showToast = () => {
+  toast.classList.add("show");
+  clearTimeout(tt);
+  tt = setTimeout(() => toast.classList.remove("show"), 2400);
+};
+const copyFallback = url => {
+  const ta = document.createElement("textarea");
+  ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  let ok = false; try { ok = document.execCommand("copy"); } catch {}
+  ta.remove(); return ok;
+};
+document.getElementById("core").addEventListener("click", async () => {
+  const url = location.href;
+  if (navigator.share && isMobile) { try { await navigator.share({ title: "Skavyoy", url }); return; } catch {} }
+  try { await navigator.clipboard.writeText(url); showToast(); return; } catch {}
+  if (copyFallback(url)) showToast();
+});
 </script>
 </body>
 </html>
